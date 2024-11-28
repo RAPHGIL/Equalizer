@@ -1,47 +1,52 @@
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import ttk
 
-# Créer la fenêtre principale
+# Créer la fenetre principale
 root = tk.Tk()
-root.title("Slider Simple")
-root.geometry("400x600")
+root.title("Sliders Simples")
+root.geometry("800x600")  # Ajuster la taille de la fenêtre
 
 # Fonction pour mettre à jour la valeur affichée du slider
-def update_value(value):
+def update_value(value, label):
     print(f"Valeur : {slider.get()}")
     label.config(text=f"Valeur: {int(float(value))}")
 
-# Fonction pour afficher la valeur du slider
-def affichageSlider():
+def affichageSlider(value):
     print(f"Valeur du slider: {slider.get()}")
 
-# Fonction pour sélectionner uniquement des .wav
-def ouvertureWAV():
-    file_path = filedialog.askopenfilename(filetypes=[("Fichiers WAV", "*.wav")])
-    print("Fichier sélectionné :", file_path)
+# Créer un label pour afficher la valeur du slider
+def create_slider_frame(root, row, col):
+    frame = ttk.Frame(root)
+    frame.grid(row=row, column=col, padx=20, pady=20)
 
-# Bouton pour ouvrir un fichier WAV
-ttk.Button(root, text="Sélectionner un fichier WAV", command=ouvertureWAV).pack(pady=10)
+    label = ttk.Label(frame, text="Valeur: 50")
+    label.pack(pady=10)
 
-# Label pour afficher la valeur du slider
-label = ttk.Label(root, text="Valeur: 50")
-label.pack(pady=10)
+    slider = ttk.Scale(
+        frame,
+        from_=0,
+        to=100,
+        orient='vertical',
+        length=300,
+        command=lambda value, label=label: update_value(value, label)
+    )
+    slider.set(50)
+    slider.pack(pady=20)
 
-# Slider vertical
-slider = ttk.Scale(
-    root,
-    from_=0,
-    to=100,
-    orient='vertical',
-    length=300,
-    command=update_value
-)
-slider.set(50)
-slider.pack(pady=20)
+    return slider, label
 
-# Bouton pour afficher la valeur du slider
+# Créer les sliders côte à côte dans un layout grid
+sliders = []
+labels = []
+
+for i in range(4):
+    slider, label = create_slider_frame(root, row=0, col=i)
+    sliders.append(slider)
+    labels.append(label)
+
+# Créer un bouton pour afficher la valeur
 button = ttk.Button(root, text="Afficher la valeur", command=affichageSlider)
-button.pack(pady=20)
+button.grid(row=1, column=0, columnspan=4, pady=20)
 
-# Lancer l'application
+# Lancement
 root.mainloop()
